@@ -1,1 +1,2 @@
 # StockSentimentAnalyzer
+# Initial commit
