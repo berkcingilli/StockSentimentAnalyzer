@@ -25,7 +25,7 @@ SECRET_KEY = '9objj%52o%3@*^--tdfiu=m33$weg9)zqifa5%*_oyn8qowr#1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'stock_sentiment.apps.StockSentimentConfig',
 ]
 
 MIDDLEWARE = [
