@@ -197,6 +197,7 @@ const spinner = document.getElementById("spinner");
                 console.log(data['pos'])
                 console.log(data['neg'])
                 console.log(data['overall'])
+                console.log(data['price'])
                 $(function () {
                     $('#container').highcharts({
                        chart: {
@@ -292,7 +293,7 @@ const spinner = document.getElementById("spinner");
                     {
                         name: 'Stock Price',
                         type: 'spline',
-                        data: [7.0,  18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9,25,29.5,5],
+                        data: data['price'],
                         tooltip: {
                             valueSuffix: '$'
                         }
@@ -347,7 +348,24 @@ const spinner = document.getElementById("spinner");
                     y: data['neu_count'],
                     color: '#058DC7'
                 }]
-            }]
+            },{
+                name: 'Percentage',
+                colorByPoint: true,
+                data: [{
+                    name: 'Positive',
+                    y: data['pos_count'],
+                    color: '#32cd32'
+                }, {
+                    name: 'Negative',
+                    y: data['neg_count'],
+                    color: '#ff0000'
+                }, {
+                    name: 'Neutral',
+                    y: data['neu_count'],
+                    color: '#058DC7'
+                }]
+            }
+            ]
         });
 
             });

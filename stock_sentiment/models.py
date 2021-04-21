@@ -20,6 +20,8 @@ class comment(models.Model):
 
     comment_date = models.DateTimeField()
 
+    comment_like_count = models.IntegerField(null=True,blank=True)
+
     pos = models.FloatField(null=True, blank=True)
     neu = models.FloatField(null=True, blank=True)
     neg = models.FloatField(null=True, blank=True)
