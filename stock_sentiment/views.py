@@ -18,6 +18,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 import pandas as pd
+from scipy.stats.stats import pearsonr
+from django.core import serializers
+import random
 # Create your views here.
 stopwords = ['her', 'during', 'among', 'thereafter', 'only', 'hers', 'in', 'none', 'with', 'un', 'put', 'hence', 'each',
              'would', 'have', 'to', 'itself', 'that', 'seeming', 'hereupon', 'someone', 'eight', 'she', 'forty', 'much',
@@ -97,6 +100,9 @@ sp_100_yahoo_finance = ["BTC-USD","AAPL", "ETH-USD","XRP-USD", "ABBV", "ABT", "S
 # AIG ,ALL , AMGN , AMT , AXP , BK , BKNG , BLK , CHTR , CL , CMCSA , COF , COP , DD , DHR , DOW , DUK , EMR ,
 # EXC , GD , LOW , MDLZ , MDT  , MET  , NEE , SLB ,SO , TMO , TXN , UNP , USB
 # 31 less occuring
+def hasNumbers(string):
+
+    return any(character.isdigit() for character in string)
 
 def fetch_graph_data(request):
     print('fetch_graph_block ')
@@ -104,7 +110,12 @@ def fetch_graph_data(request):
     print(data)
     res = dict()
     ticker_id = data['ticker_id']
-    ticker = Ticker.objects.get(id=int(ticker_id))
+    check = hasNumbers(str(ticker_id))
+    if check == True:
+        ticker = Ticker.objects.get(id=int(ticker_id))
+    else:
+        ticker = Ticker.objects.get(ticker_name=ticker_id)
+
     print(ticker)
     all_comments = ticker.comment_set.all()
 
@@ -114,10 +125,10 @@ def fetch_graph_data(request):
     res['message'] = 'Deleted'
 
     list_of_all_dates = []
-    without_neutral = all_comments.all()
-    print('COUNT WITHOUT NATURAL',without_neutral.count())
+    with_neutral = all_comments.all()
+    print('COUNT WITHOUT NATURAL',with_neutral.count())
 
-    for item in without_neutral:
+    for item in with_neutral:
         list_of_all_dates.append(item.comment_date.strftime("%Y-%m-%d"))
 
     date_df = pd.Series(list_of_all_dates)
@@ -213,49 +224,68 @@ def fetch_graph_data(request):
     res['overall'] = curr_day_overall_list
 
     # get stock price data
-
+    today_sentiment_count = comment.objects.filter(ticker_symbol=ticker.ticker_name,
+                                                   comment_date__range=[str(datetime.date.today()), str(
+                                                       datetime.date.today() + datetime.timedelta(days=1))]).count()
 
     if ticker.ticker_name == 'BTC.X':
+        print('bitcoin block entered')
         inital_date = time.mktime(datetime.datetime.strptime(unique_items[0], "%Y-%m-%d").timetuple())
-        end_date = time.mktime(datetime.datetime.strptime(str(datetime.date.today()), "%Y-%m-%d").timetuple())
+        if today_sentiment_count == 0:
+            end_date = time.mktime(datetime.datetime.strptime(str(datetime.date.today()), "%Y-%m-%d").timetuple())
+        else:
+            end_date = time.mktime(datetime.datetime.strptime(str(datetime.date.today() + datetime.timedelta(days=1)),
+                                                              "%Y-%m-%d").timetuple())
         print(inital_date, int(inital_date), type(inital_date), end_date, int(end_date), type(end_date))
         r = requests.get(
-            'https://finnhub.io/api/v1/crypto/candle?symbol={0}&resolution=D&from={1}&to={2}&token=c1vtd9t37jkvr0hc79kg'.format('BINANCE:BTCUSDT',
+            'https://finnhub.io/api/v1/crypto/candle?symbol={0}&resolution=D&from={1}&to={2}&token=c2059ml37jksha791qog'.format('BINANCE:BTCUSDT',
                 int(inital_date), int(end_date)))
         result = r.json()
         result = result['c']
+        print('CCCCCCCCCCCCCCCCCCCCC',result,len(result))
         res['price'] = result
     elif ticker.ticker_name == 'ETH.X':
         inital_date = time.mktime(datetime.datetime.strptime(unique_items[0], "%Y-%m-%d").timetuple())
-        end_date = time.mktime(datetime.datetime.strptime(str(datetime.date.today()), "%Y-%m-%d").timetuple())
+        if today_sentiment_count == 0:
+            end_date = time.mktime(datetime.datetime.strptime(str(datetime.date.today()), "%Y-%m-%d").timetuple())
+        else:
+            end_date = time.mktime(datetime.datetime.strptime(str(datetime.date.today() + datetime.timedelta(days=1)),
+                                                              "%Y-%m-%d").timetuple())
         print(inital_date, int(inital_date), type(inital_date), end_date, int(end_date), type(end_date))
         r = requests.get(
-            'https://finnhub.io/api/v1/crypto/candle?symbol={0}&resolution=D&from={1}&to={2}&token=c1vtd9t37jkvr0hc79kg'.format('BINANCE:ETHUSDT',
+            'https://finnhub.io/api/v1/crypto/candle?symbol={0}&resolution=D&from={1}&to={2}&token=c2059ml37jksha791qog'.format('BINANCE:ETHUSDT',
                 int(inital_date), int(end_date)))
         result = r.json()
         result = result['c']
         res['price'] = result
     elif ticker.ticker_name == 'XRP.X':
         inital_date = time.mktime(datetime.datetime.strptime(unique_items[0], "%Y-%m-%d").timetuple())
-        end_date = time.mktime(datetime.datetime.strptime(str(datetime.date.today()), "%Y-%m-%d").timetuple())
+        if today_sentiment_count == 0:
+            end_date = time.mktime(datetime.datetime.strptime(str(datetime.date.today()), "%Y-%m-%d").timetuple())
+        else:
+            end_date = time.mktime(datetime.datetime.strptime(str(datetime.date.today() + datetime.timedelta(days=1)),
+                                                              "%Y-%m-%d").timetuple())
         print(inital_date, int(inital_date), type(inital_date), end_date, int(end_date), type(end_date))
         r = requests.get(
-            'https://finnhub.io/api/v1/crypto/candle?symbol={0}&resolution=D&from={1}&to={2}&token=c1vtd9t37jkvr0hc79kg'.format('BINANCE:XRPUSDT',
+            'https://finnhub.io/api/v1/crypto/candle?symbol={0}&resolution=D&from={1}&to={2}&token=c2059ml37jksha791qog'.format('BINANCE:XRPUSDT',
                 int(inital_date), int(end_date)))
         result = r.json()
         result = result['c']
         res['price'] = result
     else:
         inital_date = time.mktime(datetime.datetime.strptime(unique_items[1], "%Y-%m-%d").timetuple())
-        end_date = time.mktime(datetime.datetime.strptime(str(datetime.date.today()), "%Y-%m-%d").timetuple())
+        if today_sentiment_count == 0:
+            end_date = time.mktime(datetime.datetime.strptime(str(datetime.date.today()), "%Y-%m-%d").timetuple())
+        else:
+            end_date = time.mktime(datetime.datetime.strptime(str(datetime.date.today() + datetime.timedelta(days=1)),
+                                                              "%Y-%m-%d").timetuple())
         print(inital_date, int(inital_date), type(inital_date), end_date, int(end_date), type(end_date))
-        r = requests.get('https://finnhub.io/api/v1/stock/candle?symbol={0}&resolution=D&from={1}&to={2}&token=c1vtd9t37jkvr0hc79kg'.format(ticker.ticker_name,
+        r = requests.get('https://finnhub.io/api/v1/stock/candle?symbol={0}&resolution=D&from={1}&to={2}&token=c2059ml37jksha791qog'.format(ticker.ticker_name,
                                                                                                                                          int(inital_date),int(end_date)))
         result = r.json()
         inital_prices = result['c']
         inital_dates = result['t']
         final_prices = []
-
         for i in range(len(inital_prices)):
             print('Inital block',final_prices)
             final_prices.append(inital_prices[i])
@@ -290,6 +320,81 @@ def fetch_graph_data(request):
     res['neu_count'] = neutral_count
 
     print(positive_count,negative_count,neutral_count)
+    copy_final_price = res['price']
+    print(res['price'],len(res['price']))
+    derivative_stock_price = []
+    print(copy_final_price,len(copy_final_price))
+    for i in range(len(copy_final_price)):
+        #print(i)
+        if i != len(copy_final_price) - 1:
+            derivative_stock_price.append(copy_final_price[i+1]-copy_final_price[i])
+            #print(i,derivative_stock_price)
+        else:
+            break
+
+    print('Stock Price',copy_final_price,len(copy_final_price))
+    print('Derivative sotck price',derivative_stock_price,len(derivative_stock_price))
+
+    #lower, upper = 0, 0.005
+    temp_curr_overall = curr_day_overall_list[:-1]
+    curr_day_overall_list_normalized = []
+    dmin, dmax = min(derivative_stock_price), max(derivative_stock_price)
+    for i, val in enumerate(derivative_stock_price):
+        derivative_stock_price[i] = (val - dmin) / (dmax - dmin)
+
+    omin, omax = min(temp_curr_overall), max(temp_curr_overall)
+    for i, val in enumerate(temp_curr_overall):
+        curr_day_overall_list_normalized.append((val - omin) / (omax - omin))
+
+
+    #derivative_stock_price_normalized = [lower + (upper - lower) * x for x in derivative_stock_price]
+    #curr_day_overall_list_normalized = [lower + (upper - lower) * x for x in curr_day_overall_list]
+    #print('Derivative sotck price normalized', derivative_stock_price_normalized, len(derivative_stock_price_normalized))
+    print('OVERALL', temp_curr_overall, len(temp_curr_overall))
+    print('OVERALL normalized', curr_day_overall_list_normalized, len(curr_day_overall_list_normalized))
+    print('DERIVATIVE stock price', derivative_stock_price, len(derivative_stock_price))
+    print('Derivative stock price normalized', derivative_stock_price, len(derivative_stock_price))
+
+    #res['derivate_price'] = derivative_stock_price
+    res['derivative_norm_price'] = derivative_stock_price
+    res['overall_norm_price'] = curr_day_overall_list_normalized
+    #print(res['price'],len(res['price']))
+    #print(res['derivative_norm_price'],len(res['derivative_norm_price']))
+
+    correlation = pearsonr(derivative_stock_price,curr_day_overall_list_normalized)
+
+    print(correlation)
+
+    res['corr'] = correlation[0]
+
+
+
+    # Return latest 20 sentiment.
+
+    list_of_all_dates_time = []
+    counter = 0
+    counter1 = 0
+    for item in with_neutral.filter(site_name='Stocktwits').all():
+        list_of_all_dates_time.append(item)
+        if item.comment_like_count != 0 and item.comment_like_count != None:
+            print('found')
+        counter += 1
+        if counter == 10:
+            break
+
+    for item in with_neutral.filter(site_name='Yahoo Finance').all():
+        list_of_all_dates_time.append(item)
+        counter1 += 1
+        if item.comment_like_count != 0:
+            print('found')
+        if counter1 == 10:
+            break
+
+    random.shuffle(list_of_all_dates_time)
+    #print('lankirr',type(list_of_all_dates_time))
+    data = serializers.serialize('json', list_of_all_dates_time)
+    #print('lankirr',type(data),data)
+    res['test'] = data
 
 
     return JsonResponse(res)
@@ -301,8 +406,34 @@ def diff_day_number(d1, d2):
 
     return abs((d2 - d1).days)
 
+
+def search_result(request):
+    response = json.loads(request.body)
+
+    print(response)
+    res = dict()
+
+    ticker_id = response['value']
+    pass
+
+
+
+
 def index(request):
     tickers = Ticker.objects.all()
+    print(str(datetime.date.today() + datetime.timedelta(days=1)))
+
+
+    numbers = []
+    for item in tickers:
+        temp = comment.objects.filter(ticker_symbol=item.ticker_name)
+        numbers.append(temp.count())
+
+
+    print(numbers.index(max(numbers)))
+
+    counter = numbers.index(max(numbers))
+
 
     #for item in tickers:
         #if item.ticker_name == 'USB':

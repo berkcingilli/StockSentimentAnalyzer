@@ -12,4 +12,6 @@ urlpatterns = [
     path('test/',views.test , name='test'),
     path('delete_pic/',views.delete_profile_pic , name='delete_pic'),
     path('fetch_graph_data/',views.fetch_graph_data , name='fetch_graph_data'),
+    path('search/',views.search_result , name='search_result'),
+
 ]
