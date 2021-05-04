@@ -7,7 +7,7 @@
 ### 2. open cmd and execute *pip install venv*. Since this project has all dependencies inside virtual enviroment.
 ### 3. for Windows execute *./venv/Scripts/activate*. for Linux execute *source venv/bin/activate* (Note : You have locate the correct directory usin *cd /yourfileexists*)
 ### 4. Since virtual environment is activated now you have install all dependencies in order for this project to run. Which is inside requirements.txt file. Execute *pip install -r requirements.txt* to install into virtual environent otherwise applicaiton wont work without all dependencies like django etc.
-
+## All of the process above had to be done because the dependencies exceeded over 300 MB which file
 ### 5. Now you can run the django application using this command *python manage.py runserver*. (Note check if you are in correct directory where manage.py file exists).
 ### 6. Now you must once login to admin panel by going to this url *localhost:8000/admin*.
 ### 7. Enter credentials ID:berk      password:123
