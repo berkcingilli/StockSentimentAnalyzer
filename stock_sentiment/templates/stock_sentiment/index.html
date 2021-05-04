@@ -50,8 +50,7 @@
     </nav>
 <br>
 <br>
-<!--
-onload="fetch_graph_data('BTC.X')" -->
+
 <body class="bg-white-200" >
 
 <div class="flex flex-col bg-white m-auto p-auto">
@@ -59,7 +58,7 @@ onload="fetch_graph_data('BTC.X')" -->
 
       </h1>
       <div class="flex overflow-x-scroll  mr-16 -ml-16 pb-10 hide-scroll-bar">
-        <div id='shit' class="flex flex-nowrap lg:ml-40 md:ml-20 ml-10 ">
+        <div id='horizontal' class="flex flex-nowrap lg:ml-40 md:ml-20 ml-10 ">
             {% for item in ticker %}
           <div class="inline-block  px-3 cursor-pointer" onclick="fetch_graph_data('{{ item.id }}')">
             <div class="w-48 h-48 max-w-xs  overflow-hidden rounded-lg shadow-md bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out">
@@ -71,9 +70,7 @@ onload="fetch_graph_data('BTC.X')" -->
                         </a>
 
                    <img class="w-20 ml-14 rounded-full border-2 border-gray-300" src="{{ item.ticker_logo }}" alt="" >
-                <!--
-            <div class="font-bold text-lg ml-14 ">₩91,000.00</div>
-            <span class="text-red-500 ml-14 ">▲ 2.48%</span>-->
+
             </div>
 
           </div>
@@ -122,14 +119,14 @@ onload="fetch_graph_data('BTC.X')" -->
 </div>
 
 
-<div hidden id="spinner"></div>
+<div hidden id="loading"></div>
 
 <style>
     #logo {
     color: #3175eb;
 
 }
-    #spinner:not([hidden]) {
+    #loading:not([hidden]) {
   position: fixed;
   top: 0;
   left: 0;
@@ -140,7 +137,7 @@ onload="fetch_graph_data('BTC.X')" -->
   align-items: center;
 }
 
-#spinner::after {
+#loading::after {
   content: "";
   width: 80px;
   height: 80px;
@@ -150,7 +147,7 @@ onload="fetch_graph_data('BTC.X')" -->
   will-change: transform;
   animation: spin 1s infinite linear;
 }
-    #shit {
+    #horizontal {
   white-space: nowrap;
         overflow:auto;
 
@@ -208,7 +205,7 @@ function search_func() {
 
     }
 
-
+    // code taken from django documentation
      function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -228,13 +225,13 @@ function search_func() {
 
 var hostname = window.location.host
 
-const spinner = document.getElementById("spinner");
+const loading = document.getElementById("loading");
 
     function fetch_graph_data(ticker_id) {
 
         console.log(ticker_id)
         console.log("ajax:", hostname);
-            spinner.removeAttribute("hidden");
+            loading.removeAttribute("hidden");
             fetch(`http://${hostname}/fetch_graph_data/`, {
             method: 'POST',
             headers: {
@@ -248,11 +245,11 @@ const spinner = document.getElementById("spinner");
             .then(response => response.json())
             .then(data => {
                 if (data.exception === 'corr'){
-                    spinner.setAttribute("hidden", "");
+                    loading.setAttribute("hidden", "");
                     window.alert('There is an unexpected problem occured with this ticker')
 
                 }else{
-                    spinner.setAttribute("hidden", "");
+                    loading.setAttribute("hidden", "");
                 console.log(data['categories'])
                 console.log(data['pos'])
                 console.log(data['neg'])
