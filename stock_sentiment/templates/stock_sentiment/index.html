@@ -229,7 +229,7 @@ const loading = document.getElementById("loading");
 
     function fetch_graph_data(ticker_id) {
 
-        console.log(ticker_id)
+
         console.log("ajax:", hostname);
             loading.removeAttribute("hidden");
             fetch(`http://${hostname}/fetch_graph_data/`, {
