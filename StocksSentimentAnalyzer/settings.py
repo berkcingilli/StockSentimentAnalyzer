@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'stock_sentiment.apps.StockSentimentConfig',
+    #django_crontab,
 ]
 
 MIDDLEWARE = [
@@ -119,3 +120,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+## Check readme.md file uncomment this only if you're using linux computer and know how to run periodic background tasks.
+
+# CRONJOBS = [
+#     ('30 19 * * *', 'app.cron.get_sentiment()'),
+# ]
+

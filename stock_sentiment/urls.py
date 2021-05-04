@@ -1,17 +1,12 @@
-from django.urls import path, re_path
+from django.urls import path
 from stock_sentiment import views
 
 urlpatterns = [
-    # Matches any html file - to be used for gentella
-    # Avoid using your .html in your resources.
-    # Or create a separate django app.
-    #re_path(r'^.*\.html', views.pages, name='pages'),
 
-    # The home page
+    # you can check views.py for which view is going to be run
     path('', views.index, name='home'),
-    path('test/',views.test , name='test'),
-    path('delete_pic/',views.delete_profile_pic , name='delete_pic'),
+    path('get_sentiment/',views.get_sentiment, name='get_sentiment'),
     path('fetch_graph_data/',views.fetch_graph_data , name='fetch_graph_data'),
-    path('search/',views.search_result , name='search_result'),
+    path('test_endpoint/',views.test_endpoint , name='test_endpoint'),
 
 ]

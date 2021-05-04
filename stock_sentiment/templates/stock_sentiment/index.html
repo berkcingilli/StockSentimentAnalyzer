@@ -25,7 +25,7 @@
 <nav
         class="flex items-center justify-between flex-wrap bg-white py-4 lg:px-12 shadow border-solid border-t-2 border-blue-700">
         <div class="flex justify-between lg:w-auto w-full lg:border-b-0 pl-6 pr-2 border-solid border-b-2 border-gray-300 pb-5 lg:pb-0">
-            <i class="fas fa-chart-line fa-5x"></i>
+            <i id="logo" class="fas fa-chart-line fa-5x"></i>
             <div class="flex items-center flex-shrink-0 text-gray-800 mr-32">
 
                 <span class="font-semibold text-xl tracking-tight ml-6">Stock Sentiment Analyzer</span>
@@ -50,8 +50,9 @@
     </nav>
 <br>
 <br>
-
-<body class="bg-white-200" onload="fetch_graph_data('BTC.X')">
+<!--
+onload="fetch_graph_data('BTC.X')" -->
+<body class="bg-white-200" >
 
 <div class="flex flex-col bg-white m-auto p-auto">
 <h1 class="flex py-5 lg:px-20 md:px-10 px-5 lg:mx-40 md:mx-20 mx-5 font-bold text-4xl text-gray-800">
@@ -124,6 +125,10 @@
 <div hidden id="spinner"></div>
 
 <style>
+    #logo {
+    color: #3175eb;
+
+}
     #spinner:not([hidden]) {
   position: fixed;
   top: 0;
@@ -177,8 +182,30 @@
 
 function search_func() {
         var value = document.getElementById('search_input').value
-        console.log(value)
-            fetch_graph_data(value)
+
+        //console.log(value)
+        var availableTags = [
+        {% for tick in ticker %}
+            "{{tick.ticker_name}}",
+        {% endfor %}
+    ];
+        var counter = 0;
+        availableTags.forEach(item =>{
+            if (item === value){
+                counter++;
+            }
+        })
+        //console.log(counter)
+
+
+    if (value === ""){
+        window.alert("Please fill the search bar first then click to the search icon")
+    }else if (counter ===0){
+        window.alert("Requested ticker is not existing in our database")
+    }else{
+        fetch_graph_data(value)
+    }
+
     }
 
 
@@ -220,7 +247,12 @@ const spinner = document.getElementById("spinner");
         })
             .then(response => response.json())
             .then(data => {
-                spinner.setAttribute("hidden", "");
+                if (data.exception === 'corr'){
+                    spinner.setAttribute("hidden", "");
+                    window.alert('There is an unexpected problem occured with this ticker')
+
+                }else{
+                    spinner.setAttribute("hidden", "");
                 console.log(data['categories'])
                 console.log(data['pos'])
                 console.log(data['neg'])
@@ -338,8 +370,11 @@ const spinner = document.getElementById("spinner");
                 type: 'pie'
             },
             title: {
-                text: `Overall sentiment distribution for ${data['ticker']}`
+                text: `Overall sentiment count distribution for ${data['ticker']}`
             },
+                    subtitle: {
+                        text: 'Source: Yahoo Finance Conversations & Stocktwits'
+                    },
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b><br>total: {point.y}'
             },
@@ -509,6 +544,8 @@ const spinner = document.getElementById("spinner");
                 //console.log(typeof test, test.fields)
                 })
 
+
+                }
 
 
 
