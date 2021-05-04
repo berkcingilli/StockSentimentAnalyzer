@@ -18,3 +18,6 @@
 ### *localhost:8000/get_sentiment* url will gather all comments from Yahoo Finance & Stockstwits. It will take approx 30 min. However this is not advised since you will have to wait till it finishes and there is already more than a month fo data existing to use the application.
 ### *localhost:8000/test_endpoint* url is used for testing purposes. This is not advised to entered as well since it serves as test endpoint.
 ### If you are on linux you can set a periodic task to gather sentiment. To do this settings.py CRONJOBS = [ ... ] uncomment, INSTALLED APPS django-crontab uncomment and cron.py uncomment and it is been set to everyday 19.30 it will gather sentiment. Then run *python manage.py crontab add*. Then again run the server but computer must be left open all the time so this is not advised again. You can use above url to gather sentiment and wait only for 30 min if needed.
+
+
+##Githublink: https://github.com/berkcingilli/StockSentimentAnalyzer
