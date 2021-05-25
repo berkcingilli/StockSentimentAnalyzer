@@ -19,6 +19,6 @@
 ### *localhost:8000/test_endpoint* url is used for testing purposes. This is not advised to entered as well since it serves as test endpoint.
 ### If you are on linux you can set a periodic task to gather sentiment. To do this settings.py CRONJOBS = [ ... ] uncomment, INSTALLED APPS django-crontab uncomment and cron.py uncomment and it is been set to everyday 19.30 it will gather sentiment. Then run *python manage.py crontab add*. Then again run the server but computer must be left open all the time so this is not advised again. You can use above url to gather sentiment and wait only for 30 min if needed.
 
-![Chart1.PNG](https://github.com/[berkcingilli]/[StockSentimentAnalyzer]/image.png?raw=true)
+![Chart1.PNG](https://github.com/berkcingilli/StockSentimentAnalyzer/blob/main/Chart1.PNG)
 
 ##Githublink: https://github.com/berkcingilli/StockSentimentAnalyzer
