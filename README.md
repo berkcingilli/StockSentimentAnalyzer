@@ -21,4 +21,8 @@
 
 ![Chart1.PNG](https://github.com/berkcingilli/StockSentimentAnalyzer/blob/main/Chart1.PNG)
 
+![Chart2.PNG](https://github.com/berkcingilli/StockSentimentAnalyzer/blob/main/Chart2.PNG)
+
+![Chart3.PNG](https://github.com/berkcingilli/StockSentimentAnalyzer/blob/main/Chart3.PNG)
+
 ##Githublink: https://github.com/berkcingilli/StockSentimentAnalyzer
